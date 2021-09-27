@@ -1,0 +1,28 @@
+{
+  "name": "cliente-sp-vue",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Conexion al servidor push ",
+  "author": "Oswaldo Sanchez Melos <oswaldosanchezmelos@gmail.com>",
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mel0s/cliente-sp-vue.git"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "vue": "^2.6.11",
+    "vue-native-websocket": "^2.0.15",
+    "vuex": "^3.6.2"
+  },
+  "bugs": {
+    "url": "https://github.com/mel0s/cliente-sp-vue/issues"
+  },
+  "devDependencies": {},
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 11"
+  ]
+}

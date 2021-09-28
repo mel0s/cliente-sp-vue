@@ -8,7 +8,7 @@ import {
   SOCKET_ONMESSAGE,
   SOCKET_RECONNECT,
   SOCKET_RECONNECT_ERROR
-} from "./mutation-types";
+} from "./mutation-types.js";
 
 Vue.use(Vuex);
 

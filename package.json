@@ -1,8 +1,8 @@
 {
   "name": "cliente-sp-vue",
-  "version": "0.0.1",
-  "private": true,
-  "description": "Conexion al servidor push ",
+  "version": "0.0.2",
+  "private": false,
+  "description": "Conexion al servidor push",
   "author": "Oswaldo Sanchez Melos <oswaldosanchezmelos@gmail.com>",
   "scripts": {
   },
@@ -19,6 +19,7 @@
   "bugs": {
     "url": "https://github.com/mel0s/cliente-sp-vue/issues"
   },
+  "keywords": ["socket" ,"servidor push", "token", "svanesa"],
   "devDependencies": {},
   "browserslist": [
     "> 1%",

@@ -1,14 +1,9 @@
 import Vue from "vue";
 import store from "./store";
 
-import init from "~/sp-init.js";
-let ws = init.ws;
-let token = init. token;
-let id = init.id;
-
-function conectarSocket() {
+function conectarSocket(init) {
   if (!store.state.socket.isConnected) {
-    Vue.prototype.$connect( `${ws}?id=${id}&token=${token}`);
+    Vue.prototype.$connect( `${init.ws}?id=${init.id}&token=${init.token}`);
   }
 
 }
@@ -33,7 +28,7 @@ function desconetarSocket() {
   Vue.prototype.$disconnect();
 }
 
-export {
+export default {
   conectarSocket,
   enviarNotificacion,
   desconetarSocket

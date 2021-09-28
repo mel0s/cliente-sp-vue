@@ -1,17 +1,17 @@
 {
   "name": "cliente-sp-vue",
-  "version": "0.0.2",
+  "version": "0.0.6",
   "private": false,
   "description": "Conexion al servidor push",
   "author": "Oswaldo Sanchez Melos <oswaldosanchezmelos@gmail.com>",
-  "scripts": {
-  },
+  "license": "MIT",
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/mel0s/cliente-sp-vue.git"
   },
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^0.21.4",
     "vue": "^2.6.11",
     "vue-native-websocket": "^2.0.15",
     "vuex": "^3.6.2"
@@ -19,7 +19,12 @@
   "bugs": {
     "url": "https://github.com/mel0s/cliente-sp-vue/issues"
   },
-  "keywords": ["socket" ,"servidor push", "token", "svanesa"],
+  "keywords": [
+    "socket",
+    "servidor push",
+    "token",
+    "svanesa"
+  ],
   "devDependencies": {},
   "browserslist": [
     "> 1%",

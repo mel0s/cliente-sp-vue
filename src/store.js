@@ -1,5 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import Axios from "axios";
+import init from "../init.js";
 
 import {
   SOCKET_ONOPEN,
@@ -12,6 +14,14 @@ import {
 
 Vue.use(Vuex);
 
+import socket from "./socket"
+
+Axios.defaults.headers.common["access-token"] = init.tokenApi;
+Axios.defaults.headers.common["sistemaorigenid-token"] = init.sistemaOrigenId;
+Axios.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
+Axios.defaults.headers.common["tipo-token"] = "llave";
+Axios.defaults.headers.common["llave-token"] = init.llave;
+
 export default new Vuex.Store({
   state: {
     socket: {
@@ -21,8 +31,8 @@ export default new Vuex.Store({
     },
     notificacionesSP: {
       estado: false,
-      alertas: [],
-      alerta: {}
+      alertas: () => { return new Array() },
+      alerta: () => { return {} }
     }
 
 
@@ -46,14 +56,8 @@ export default new Vuex.Store({
       //console.log(Vue.prototype.$awn);
       let data = JSON.parse(message.data);
 
-      if (!Vue.prototype.$awn) {
-        return;
-      }
-
       if (data.status == "200") {
         let d = data.data;
-
-
 
         if (d.accion === "NOTI_SVANESA_ESTADO") {
 
@@ -63,40 +67,36 @@ export default new Vuex.Store({
         // Cuando la accion no tiene nombre se toma por default NOTI_SVANESA_ALERTA
         else if (d.accion === "NOTI_SVANESA_ALERTA") {
           state.notificacionesSP.alertas.push(d);
-
         }
-
         state.notificacionesSP.alerta = d;
-
-
       }
       else if (data.status == "400") {
         state.notificacionesSP.alerta = {
-          tipo:'warning-sp',
+          tipo: 'warning-sp',
           mensaje: data.message
         };
       }
       else if (data.status == "401") {
         state.notificacionesSP.alerta = {
-          tipo:'warning-sp',
+          tipo: 'warning-sp',
           mensaje: data.message
         };
       }
       else if (data.status == "409") {
         state.notificacionesSP.alerta = {
-          tipo:'warning-sp',
+          tipo: 'warning-sp',
           mensaje: data.message
         };
       }
       else if (data.status == "500") {
         state.notificacionesSP.alerta = {
-          tipo:'warning-sp',
+          tipo: 'warning-sp',
           mensaje: data.message
         };
       }
       else {
         state.notificacionesSP.alerta = {
-          tipo:'warning-sp',
+          tipo: 'warning-sp',
           mensaje: data.message
         };
       }
@@ -113,8 +113,17 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    sendMessage: function (context, message) {
-      console.log(message);
+    enviarNotificacion: function (context, obj) {
+      if (typeof obj == "object") {
+        obj.accion = "NOTI_SVANESA_ALERTA";
+        socket.enviarNotificacion(obj, 1000);
+      }
+    },
+    conectarSocket() {
+      socket.conectarSocket(init);
+    },
+    desconetarSocket() {
+      socket.desconetarSocket();
     },
     agregarNotificacionAlertas: (context, d) => {
       context.commit('MUTATE_NOTIFICACION_SP_ALERTAS', d);

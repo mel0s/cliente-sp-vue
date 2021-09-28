@@ -28,11 +28,12 @@ export default new Vuex.Store({
       isConnected: false,
       message: "",
       reconnectError: false,
+      id:''
     },
     notificacionesSP: {
       estado: false,
-      alertas: () => { return new Array() },
-      alerta: () => { return {} }
+      alertas:  new Array() ,
+      alerta: {} 
     }
 
 
@@ -111,6 +112,9 @@ export default new Vuex.Store({
     MUTATE_NOTIFICACION_SP_ALERTAS(state, alertas) {
       state.notificacionesSP.alertas = [...alertas];
     },
+    MUTATE_ID_SP(state, id) {
+      state.socket.id = id;
+    },
   },
   actions: {
     enviarNotificacion: function (context, obj) {
@@ -119,8 +123,14 @@ export default new Vuex.Store({
         socket.enviarNotificacion(obj, 1000);
       }
     },
-    conectarSocket() {
+    asignarId(context, id) {
+      
+      context.commit('MUTATE_ID_SP', id);
+      
+    },
+    conectarSocket(context) {
       socket.conectarSocket(init);
+      
     },
     desconetarSocket() {
       socket.desconetarSocket();

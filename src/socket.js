@@ -3,7 +3,7 @@ import store from "./store";
 
 function conectarSocket(init) {
   if (!store.state.socket.isConnected) {
-    Vue.prototype.$connect( `${init.ws}?id=${init.id}&token=${init.token}`);
+    Vue.prototype.$connect( `${init.ws}?id=${store.state.socket.id}&token=${init.token}`);
   }
 
 }

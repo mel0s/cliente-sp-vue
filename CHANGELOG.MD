@@ -2,6 +2,9 @@
 Notable cambios de este proyecto
 
 ## Unreleased - 2021-09-28
+### Added
+- Agregando parametro id
+## 0.0.6 - 2021-09-28
 ### Fixed
 - Correcion de bug menor
 

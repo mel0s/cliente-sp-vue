@@ -3,6 +3,7 @@ let token = "token-prueba";
 let tokenApi = "token-svanesa";
 let llave = "L1234567890";
 let sistemaOrigenId = "s123456780";
+//  Buscando el archivo de configuracion
 import init from "../../sp.config.js";
 
 let v = init.variables;
@@ -19,11 +20,9 @@ if (v) {
 
   if (v.sistemaOrigenId)
     tokenApi = v.sistemaOrigenId;
-
-
 }
 
-
+// Esportando
 export default {
   ws,
   token,

@@ -1,7 +1,7 @@
 import Vue from "vue";
-import Vuex from "vuex";
 import Axios from "axios";
 import init from "../init.js";
+import socket from "./socket"
 
 import {
   SOCKET_ONOPEN,
@@ -12,9 +12,7 @@ import {
   SOCKET_RECONNECT_ERROR
 } from "./mutation-types.js";
 
-Vue.use(Vuex);
 
-import socket from "./socket"
 
 Axios.defaults.headers.common["access-token"] = init.tokenApi;
 Axios.defaults.headers.common["sistemaorigenid-token"] = init.sistemaOrigenId;
@@ -22,18 +20,18 @@ Axios.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded
 Axios.defaults.headers.common["tipo-token"] = "llave";
 Axios.defaults.headers.common["llave-token"] = init.llave;
 
-export default new Vuex.Store({
+const  moduloSP = {
   state: {
     socket: {
       isConnected: false,
       message: "",
       reconnectError: false,
-      id:''
+      id: ''
     },
     notificacionesSP: {
       estado: false,
-      alertas:  new Array() ,
-      alerta: {} 
+      alertas: new Array(),
+      alerta: {}
     }
 
 
@@ -57,9 +55,11 @@ export default new Vuex.Store({
       //console.log(Vue.prototype.$awn);
       let data = JSON.parse(message.data);
 
+      // Alerta correcta
       if (data.status == "200") {
         let d = data.data;
 
+        // Cambia el estado del usuario en ejecucion.
         if (d.accion === "NOTI_SVANESA_ESTADO") {
 
           state.notificacionesSP.estado = d.estado;
@@ -71,6 +71,7 @@ export default new Vuex.Store({
         }
         state.notificacionesSP.alerta = d;
       }
+      // Alertas error
       else if (data.status == "400") {
         state.notificacionesSP.alerta = {
           tipo: 'warning-sp',
@@ -123,14 +124,20 @@ export default new Vuex.Store({
         socket.enviarNotificacion(obj, 1000);
       }
     },
-    asignarId(context, id) {
-      
-      context.commit('MUTATE_ID_SP', id);
-      
+    cambiarEstado: function (context, obj) {
+      if (typeof obj == "object") {
+        obj.accion = "NOTI_SVANESA_ESTADO";
+        socket.enviarNotificacion(obj, 1000);
+      }
     },
-    conectarSocket(context) {
+    asignarId(context, id) {
+
+      context.commit('MUTATE_ID_SP', id);
+
+    },
+    conectarSocket() {
       socket.conectarSocket(init);
-      
+
     },
     desconetarSocket() {
       socket.desconetarSocket();
@@ -140,11 +147,22 @@ export default new Vuex.Store({
     },
   },
   getters: {
-    notificacionesAlertas: (state) => {
+    alertas: (state) => {
       return state.notificacionesSP.alertas;
+    },
+    alerta: (state) => {
+      return state.notificacionesSP.alerta;
     },
     estado: (state) => {
       return state.notificacionesSP.estado;
     },
   }
-});
+
+}
+
+// export default new Vuex.Store({
+
+// });
+
+
+export default  moduloSP ;

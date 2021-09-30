@@ -58,16 +58,15 @@ const  moduloSP = {
       // Alerta correcta
       if (data.status == "200") {
         let d = data.data;
-
         // Cambia el estado del usuario en ejecucion.
         if (d.accion === "NOTI_SVANESA_ESTADO") {
-
           state.notificacionesSP.estado = d.estado;
           // coloque aqui un accion
         }
         // Cuando la accion no tiene nombre se toma por default NOTI_SVANESA_ALERTA
         else if (d.accion === "NOTI_SVANESA_ALERTA") {
           state.notificacionesSP.alertas.push(d);
+          // Coloque aqui una accion
         }
         state.notificacionesSP.alerta = d;
       }
@@ -118,6 +117,12 @@ const  moduloSP = {
     },
   },
   actions: {
+    asignarId(context, id) {
+      context.commit('MUTATE_ID_SP', id);
+    },
+    agregarNotificacionAlertas: (context, d) => {
+      context.commit('MUTATE_NOTIFICACION_SP_ALERTAS', d);
+    },
     enviarNotificacion: function (context, obj) {
       if (typeof obj == "object") {
         obj.accion = "NOTI_SVANESA_ALERTA";
@@ -130,21 +135,14 @@ const  moduloSP = {
         socket.enviarNotificacion(obj, 1000);
       }
     },
-    asignarId(context, id) {
-
-      context.commit('MUTATE_ID_SP', id);
-
-    },
+   
     conectarSocket() {
       socket.conectarSocket(init);
-
     },
     desconetarSocket() {
       socket.desconetarSocket();
     },
-    agregarNotificacionAlertas: (context, d) => {
-      context.commit('MUTATE_NOTIFICACION_SP_ALERTAS', d);
-    },
+    
   },
   getters: {
     alertas: (state) => {
@@ -159,10 +157,5 @@ const  moduloSP = {
   }
 
 }
-
-// export default new Vuex.Store({
-
-// });
-
 
 export default  moduloSP ;

@@ -2,7 +2,6 @@ import Vue from "vue";
 import store from "./store";
 
 // Conectamos con el servidor push svanesa
-
 function conectarSocket(init) {
   if (!store.state.socket.isConnected) {
     Vue.prototype.$connect(`${init.ws}?id=${store.state.socket.id}&token=${init.token}`);
@@ -12,17 +11,18 @@ function conectarSocket(init) {
 
 // Envio de la notificacion valida a espera del servidor listo
 function enviarNotificacion(noti, interval = 1000) {
-  function waitForConnection(callback, interval) {
+  function esperaConexion(callback, interval) {
+    // Listo el cliente
     if (Vue.prototype.$socket.readyState === 1) {
       callback();
     } else {
+      // Se generan time up paara la espera 
       setTimeout(function () {
-        waitForConnection(callback, interval);
+        esperaConexion(callback, interval);
       }, interval);
     }
   }
-  waitForConnection(function () {
-
+  esperaConexion(function () {
     // Agregamos de manera automatica el token
     if (typeof noti == 'object') {      
       noti.token = init.token;

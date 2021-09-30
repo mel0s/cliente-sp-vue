@@ -84,6 +84,7 @@ let noti = {
         mensaje: 'Mensaje',
         tipo: 'Info',
         datos:[],
+        dispositivo:"web"
       };
 this.$store.dispatch("enviarNotificacion", noti);
 

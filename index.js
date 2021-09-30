@@ -1,7 +1,5 @@
 "strict mode"
-import Vue from "vue";
-import VueNativeSock from "vue-native-websocket";
-import store from './src/store.js'
+import moduloSP from './src/store.js'
 import init from "./init"
 import {
   SOCKET_ONOPEN,
@@ -22,14 +20,10 @@ const mutations = {
 };
 
 
-Vue.use(VueNativeSock, init.ws, {
-  store: store,
-  mutations: mutations,
-  reconnection: true,
-  connectManually: true,
-  reconnectionDelay: 3000
-});
+
 
 export default{
-  store
+  moduloSP,
+  mutations,
+  init
 }

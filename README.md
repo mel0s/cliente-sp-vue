@@ -79,12 +79,11 @@ this.$store.dispatch("conectarSocket");
 
 ```
 let noti = {        
-        titulo: 'Titulo',
-        id:"ID_A_ENVIAR",
+        titulo: 'Titulo',        
+        para:"ID_A_ENVIAR_NOTIFICACION",
         mensaje: 'Mensaje',
         tipo: 'Info',
         datos:[],
-        accion: "NOTI_SVANESA_ALERTA"
       };
 this.$store.dispatch("enviarNotificacion", noti);
 

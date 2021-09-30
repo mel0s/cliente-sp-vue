@@ -123,12 +123,6 @@ const  moduloSP = {
     agregarNotificacionAlertas: (context, d) => {
       context.commit('MUTATE_NOTIFICACION_SP_ALERTAS', d);
     },
-    enviarNotificacion: function (context, obj) {
-      if (typeof obj == "object") {
-        obj.accion = "NOTI_SVANESA_ALERTA";
-        socket.enviarNotificacion(obj, 1000);
-      }
-    },
     cambiarEstado: function (context, obj) {
       if (typeof obj == "object") {
         obj.accion = "NOTI_SVANESA_ESTADO";
@@ -142,6 +136,19 @@ const  moduloSP = {
     desconetarSocket() {
       socket.desconetarSocket();
     },
+    enviarNotificacion: function (context, obj) {
+      if (typeof obj == "object") {
+        obj.accion = "NOTI_SVANESA_ALERTA";
+        socket.enviarNotificacion(obj, 1000);
+      }
+    },
+    enviarNotificacionSistema: function (context, obj) {
+      if (typeof obj == "object") {
+        obj.accion = "NOTI_SVANESA_SISTEMA_TODOS";
+        socket.enviarNotificacion(obj, 1000);
+      }
+    },
+    
     
   },
   getters: {

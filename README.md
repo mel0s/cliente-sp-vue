@@ -117,9 +117,6 @@ this.$store.dispatch("desconetarSocket");
 
 > En el mismo modulo anterior existe la eqtiqueta sistema con un idunico.
 
-5. Llave de acceso del token
-
-> Al igual que la variable 3 y 4 en el modulo tokens encuentras la llave.
 
 ---
 **NOTA**
@@ -131,15 +128,14 @@ sp.config.js
 ```
 let token = "sp-000000000-00000-000-0000-0000000000";
 let tokenApi = "e00000000000000000000000000.000000000000000000000000000000000000000000000000000000000000000000.000000000-00000000000-0000000_0";
-let llave = "0100000000+000000000000000000000000000000000000000000000--";
+
 let sistemaOrigenId = "00000000000000000000";
 
 
-module.exports = {
+exports default {
   variables: {
     tokenApi,
     token,
-    llave,
     sistemaOrigenId
   }
 }

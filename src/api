@@ -1,0 +1,19 @@
+import axios from "axios";
+let sesion = '';
+function obtenerAcceso() {
+  let filtro = {
+    clave:'',
+    sistemaId:'',
+    usuarioId:''
+  };
+
+  axios
+    .post(`${this.$hostname}/api/accesoUsuarioToken`,filtro)
+    .then((r) => {
+      let d = r.data.data.;
+    })
+    .catch((e) => {
+      this.$errorMiddleware(e);
+    });
+
+}

@@ -33,8 +33,6 @@ const  moduloSP = {
       alertas: new Array(),
       alerta: {}
     }
-
-
   },
   mutations: {
     [SOCKET_ONOPEN](state, event) {
@@ -148,6 +146,10 @@ const  moduloSP = {
         socket.enviarNotificacion(obj, 1000);
       }
     },
+    obtenerNotificaciones(){
+     
+      
+    }
     
     
   },
@@ -164,5 +166,7 @@ const  moduloSP = {
   }
 
 }
+
+
 
 export default  moduloSP ;

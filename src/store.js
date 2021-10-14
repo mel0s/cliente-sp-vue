@@ -113,10 +113,16 @@ const  moduloSP = {
     MUTATE_ID_SP(state, id) {
       state.socket.id = id;
     },
+    MUTATE_CLAVE_SP(state, clave){
+      state.socket.clave = clave;
+    }
   },
   actions: {
     asignarId(context, id) {
       context.commit('MUTATE_ID_SP', id);
+    },
+    asignarClave(context, clave) {
+      context.commit('MUTATE_CLAVE_SP', clave);
     },
     agregarNotificacionAlertas: (context, d) => {
       context.commit('MUTATE_NOTIFICACION_SP_ALERTAS', d);

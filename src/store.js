@@ -2,6 +2,7 @@ import Vue from "vue";
 import Axios from "axios";
 import init from "../init.js";
 import socket from "./socket"
+import Api from './api';
 
 import {
   SOCKET_ONOPEN,
@@ -20,13 +21,19 @@ Axios.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded
 Axios.defaults.headers.common["tipo-token"] = "llave";
 Axios.defaults.headers.common["llave-token"] = init.llave;
 
+
+let api ;
 const  moduloSP = {
   state: {
     socket: {
       isConnected: false,
       message: "",
       reconnectError: false,
-      id: ''
+      admistradorId:'',
+      id: '',
+      dispositivo,
+      clave:'',
+      sesion:''
     },
     notificacionesSP: {
       estado: false,
@@ -110,19 +117,25 @@ const  moduloSP = {
     MUTATE_NOTIFICACION_SP_ALERTAS(state, alertas) {
       state.notificacionesSP.alertas = [...alertas];
     },
-    MUTATE_ID_SP(state, id) {
-      state.socket.id = id;
+    MUTATE_VARIABLES_SP(state, variables) {
+      state.socket.id = variables.id;
+      state.socket.clave = variables.clave;
     },
-    MUTATE_CLAVE_SP(state, clave){
-      state.socket.clave = clave;
+    MUTATE_SESION_SP(state, sesion){
+      state.socket.sesion = sesion;
     }
   },
   actions: {
-    asignarId(context, id) {
-      context.commit('MUTATE_ID_SP', id);
-    },
     asignarClave(context, clave) {
-      context.commit('MUTATE_CLAVE_SP', clave);
+      context.commit('MUTATE_ID_SP', clave);
+    },
+    
+    asignarVariables(context, variables) {
+      context.commit('MUTATE_VARIABLES_SP', variables);
+    },
+   
+    asignarSesion(context, sesion) {
+      context.commit('MUTATE_SESION_SP', sesion);
     },
     agregarNotificacionAlertas: (context, d) => {
       context.commit('MUTATE_NOTIFICACION_SP_ALERTAS', d);
@@ -133,9 +146,17 @@ const  moduloSP = {
         socket.enviarNotificacion(obj, 1000);
       }
     },
+    iniciarApi(context, clave){
+      api =  new  Api(init.sistemaOrigenId,init.tokenApi, init.token, context.state.dispositivo, context.state.admistradorId, init.host, context);
+      api.obtenerAcceso(clave);
+    },
    
     conectarSocket() {
       socket.conectarSocket(init);
+      if(api){
+        api.iniciarApi();
+      }
+      
     },
     desconetarSocket() {
       socket.desconetarSocket();

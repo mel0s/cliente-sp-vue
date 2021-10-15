@@ -1,4 +1,5 @@
 let ws = "wss://socket.svanesa.online";
+let host = 'https://svanesa.online';
 let token = "token-prueba";
 let tokenApi = "token-svanesa";
 let llave = "L1234567890";
@@ -28,5 +29,6 @@ export default {
   token,
   llave,
   tokenApi,
-  sistemaOrigenId
+  sistemaOrigenId,
+  host
 }

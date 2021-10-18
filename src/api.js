@@ -26,24 +26,36 @@ export default class api {
 
   }
 
+  /**
+   * Ontiene los datos del servidor push
+   */
   async iniciar() {
     //await this.obtenerAcceso();
     this.notificaciones = await this.obtenerNotificacionesVigentes();
     
   }
   
+  /**
+   * Obtiene el token de acceso.
+   * @param {String} clave  -  Cadena con la clave de acceso para obtener la sesion 
+   */
   async obtenerAcceso(clave) {
+    // Parametros de la consulta.
     let filtro = {
       clave: clave,
       sistemaId: this.sistemaOrigenId,
       usuarioId: this.usuarioId
     };
 
+    // Petecion de sesion token
     await axios
       .post(`${this.host}/api/accesoUsuarioToken`, filtro)
       .then((r) => {
         this.sesionToken = r.data.data.sesionToken;
+        // Guardamos la variable de sesion
         this.context.commit('MUTATE_SESION_SP', this.sesionToken);
+
+        // Quitamos la clave 
         this.context.commit("MUTATE_CLAVE_SP", "#CLAVEsp")
 
         function exito(config) {
@@ -65,6 +77,11 @@ export default class api {
         errores(e);
       });
   }
+
+  /**
+   * Petecion para obtener el listado de notificaciones registradas
+   * @returns 
+   */
 
   async obtenerNotificacionesVigentes() {
     let noti = [];

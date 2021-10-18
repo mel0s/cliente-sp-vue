@@ -174,8 +174,7 @@ const  moduloSP = {
       }
     },
     obtenerNotificaciones(){
-     
-      
+      api.obtenerNotificacionesVigentes();
     }
     
     

@@ -130,8 +130,11 @@ const  moduloSP = {
       context.commit('MUTATE_ID_SP', clave);
     },
     
-    asignarVariables(context, variables) {
+    iniciarSP(context, variables) {
       context.commit('MUTATE_VARIABLES_SP', variables);
+      api =  new  Api(init.sistemaOrigenId,init.tokenApi, init.token, context.state.dispositivo, context.state.admistradorId, init.host, context);
+      api.obtenerAcceso(variables.clave);
+      
     },
    
     asignarSesion(context, sesion) {
@@ -147,8 +150,7 @@ const  moduloSP = {
       }
     },
     iniciarApi(context, clave){
-      api =  new  Api(init.sistemaOrigenId,init.tokenApi, init.token, context.state.dispositivo, context.state.admistradorId, init.host, context);
-      api.obtenerAcceso(clave);
+     
     },
    
     conectarSocket() {

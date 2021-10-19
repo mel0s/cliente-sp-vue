@@ -27,3 +27,7 @@ export default{
   mutations,
   init
 }
+  export default {
+    hola: ""
+
+  }

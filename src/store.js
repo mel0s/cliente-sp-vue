@@ -22,18 +22,18 @@ Axios.defaults.headers.common["tipo-token"] = "llave";
 Axios.defaults.headers.common["llave-token"] = init.llave;
 
 
-let api ;
-const  moduloSP = {
+let api;
+const moduloSP = {
   state: {
     socket: {
       isConnected: false,
       message: "",
       reconnectError: false,
-      admistradorId:'',
+      admistradorId: '',
       id: '',
-      dispositivo,
-      clave:'',
-      sesion:''
+      dispositivo: '',
+      clave: '',
+      sesion: ''
     },
     notificacionesSP: {
       estado: false,
@@ -121,7 +121,7 @@ const  moduloSP = {
       state.socket.id = variables.id;
       state.socket.clave = variables.clave;
     },
-    MUTATE_SESION_SP(state, sesion){
+    MUTATE_SESION_SP(state, sesion) {
       state.socket.sesion = sesion;
     }
   },
@@ -129,14 +129,13 @@ const  moduloSP = {
     asignarClave(context, clave) {
       context.commit('MUTATE_ID_SP', clave);
     },
-    
+
     iniciarSP(context, variables) {
       context.commit('MUTATE_VARIABLES_SP', variables);
-      api =  new  Api(init.sistemaOrigenId,init.tokenApi, init.token, context.state.dispositivo, context.state.admistradorId, init.host, context);
+      api = new Api(init.sistemaOrigenId, init.tokenApi, init.token, context.state.dispositivo, context.state.admistradorId, init.host, context);
       api.obtenerAcceso(variables.clave);
-      
     },
-   
+
     asignarSesion(context, sesion) {
       context.commit('MUTATE_SESION_SP', sesion);
     },
@@ -149,16 +148,16 @@ const  moduloSP = {
         socket.enviarNotificacion(obj, 1000);
       }
     },
-    iniciarApi(context, clave){
-     
+    iniciarApi(context, clave) {
+
     },
-   
+
     conectarSocket() {
       socket.conectarSocket(init);
-      if(api){
+      if (api) {
         api.iniciarApi();
       }
-      
+
     },
     desconetarSocket() {
       socket.desconetarSocket();
@@ -175,11 +174,11 @@ const  moduloSP = {
         socket.enviarNotificacion(obj, 1000);
       }
     },
-    obtenerNotificaciones(){
+    obtenerNotificaciones() {
       api.obtenerNotificacionesVigentes();
     }
-    
-    
+
+
   },
   getters: {
     alertas: (state) => {
@@ -197,4 +196,4 @@ const  moduloSP = {
 
 
 
-export default  moduloSP ;
+export default moduloSP;

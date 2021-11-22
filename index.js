@@ -22,12 +22,8 @@ const mutations = {
 
 
 // Modulo SP
-export default{
+export default {
   moduloSP,
   mutations,
   init
 }
-  export default {
-    hola: ""
-
-  }

@@ -5,11 +5,11 @@ import errores from "../errores";
  * Clase para el acceso
  */
 export default class api {
-  constructor( sistemaOrigenId, tokenApi, tokenSP, dispositivo, usuarioId, host,context) {
+  constructor(sistemaOrigenId, tokenApi, tokenSP, dispositivo, usuarioId, host, context) {
     this.sesionToken = "";
     this.notificaciones = [];
     //this.clave = clave;
-    this.sistemaId = sistemaId;
+    this.sistemaId = sistemaOrigenId;
     this.usuarioId = usuarioId;
     this.host = host;
     this.tokenSP = tokenSP;
@@ -32,9 +32,9 @@ export default class api {
   async iniciar() {
     //await this.obtenerAcceso();
     this.notificaciones = await this.obtenerNotificacionesVigentes();
-    
+
   }
-  
+
   /**
    * Obtiene el token de acceso.
    * @param {String} clave  -  Cadena con la clave de acceso para obtener la sesion 
@@ -60,7 +60,7 @@ export default class api {
 
         function exito(config) {
           config.headers.common["sesion-token"] = this.sesionToken;
-          if (usuarioId) {
+          if (this.usuarioId) {
             config.headers.common["administradorid-token"] = this.usuarioId;
           }
           return config;
@@ -91,16 +91,16 @@ export default class api {
         let res = r.data;
         noti = res.data;
 
-        if(context){
-          context.commit('MUTATE_CLAVE_SP', noti)
-        }    
+        if (this.context) {
+          this.context.commit('MUTATE_CLAVE_SP', noti)
+        }
 
       })
       .catch((e) => {
         errores(e);
       });
 
-      return noti;
+    return noti;
   }
 
 }

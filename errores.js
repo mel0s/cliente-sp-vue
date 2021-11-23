@@ -20,5 +20,4 @@ export default function errores(e) {
   else {
     console.log(e.message);
   }
-
-};
+}

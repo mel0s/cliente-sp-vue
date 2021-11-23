@@ -18,21 +18,19 @@ import {
 Axios.defaults.headers.common["access-token"] = init.tokenApi;
 Axios.defaults.headers.common["sistemaorigenid-token"] = init.sistemaOrigenId;
 Axios.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
-// Axios.defaults.headers.common["tipo-token"] = "llave";
-// Axios.defaults.headers.common["llave-token"] = init.llave;
 
 
 let api;
 const moduloSP = {
   state: {
     socket: {
-      isConnected: false,
-      message: "",
-      reconnectError: false,
       admistradorId: '',
-      id: '',
-      dispositivo: '',
       clave: '',
+      dispositivo: '',
+      message: "",
+      id: '',
+      isConnected: false,
+      reconnectError: false,
       sesion: ''
     },
     notificacionesSP: {
@@ -47,7 +45,7 @@ const moduloSP = {
       console.log("conectado");
       state.socket.isConnected = true;
     },
-    [SOCKET_ONCLOSE](state, event) {
+    [SOCKET_ONCLOSE](state) {
       console.log("Cerrando la conexion")
       state.socket.isConnected = false;
     },
@@ -121,6 +119,9 @@ const moduloSP = {
       state.socket.id = variables.id;
       state.socket.clave = variables.clave;
     },
+    MUTATE_ID_SP(state, id) {
+      state.socket.id = id;
+    },
     MUTATE_SESION_SP(state, sesion) {
       state.socket.sesion = sesion;
     }
@@ -148,23 +149,19 @@ const moduloSP = {
         socket.enviarNotificacion(obj, 1000);
       }
     },
-    iniciarApi(context, clave) {
-
-    },
-
     conectarSocket() {
       socket.conectarSocket(init);
       if (api) {
         api.iniciarApi();
       }
-
     },
     desconetarSocket() {
       socket.desconetarSocket();
     },
-    enviarNotificacion: function (context, obj) {
+    enviarNotificacion: function ({ context, obj }) {
       if (typeof obj == "object") {
         obj.accion = "NOTI_SVANESA_ALERTA";
+        obj.id = context.state
         socket.enviarNotificacion(obj, 1000);
       }
     },

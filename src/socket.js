@@ -1,5 +1,6 @@
 import Vue from "vue";
 import store from "./store";
+import init from "../init.js"
 
 // Conectamos con el servidor push svanesa
 function conectarSocket(init) {
@@ -24,7 +25,7 @@ function enviarNotificacion(noti, interval = 1000) {
   }
   esperaConexion(function () {
     // Agregamos de manera automatica el token
-    if (typeof noti == 'object') {      
+    if (typeof noti == 'object') {
       noti.token = init.token;
       noti.id = store.state.socket.id;
       Vue.prototype.$socket.send(JSON.stringify(noti))

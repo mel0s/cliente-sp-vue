@@ -1,0 +1,9 @@
+{
+    "nudo": {
+        "ws": "wss://socket.svanesa.online",
+        "token": "sp-e443841b-1fa1-40e0-878d-f1e304a15032",
+        "tokenApi": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjaGVjayI6dHJ1ZSwiaWF0IjoxNjI3NDk3MjAwLCJleHAiOjE2NTkwMzMyMDB9.95lC4eTeMOlvb-n45B9fp72UCm6vFeIYA-dmou4Yq_k",
+        "sistemaOrigenId": "607E2DF011D0B909E9F7FE2B",
+        "servidor": "https://svanesa.online"
+    }
+}

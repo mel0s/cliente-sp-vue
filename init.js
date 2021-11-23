@@ -5,7 +5,7 @@ let tokenApi = "token-svanesa";
 //let llave = "L1234567890";
 let sistemaOrigenId = "s123456780";
 //  Buscando el archivo de configuracion
-import init from "../../sp.config.js";
+import init from "~/sp.config.js";
 
 let v = init.variables;
 
@@ -27,7 +27,7 @@ if (v) {
 export default {
   ws,
   token,
-  llave,
+  //llave,
   tokenApi,
   sistemaOrigenId,
   host

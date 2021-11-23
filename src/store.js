@@ -18,8 +18,8 @@ import {
 Axios.defaults.headers.common["access-token"] = init.tokenApi;
 Axios.defaults.headers.common["sistemaorigenid-token"] = init.sistemaOrigenId;
 Axios.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
-Axios.defaults.headers.common["tipo-token"] = "llave";
-Axios.defaults.headers.common["llave-token"] = init.llave;
+// Axios.defaults.headers.common["tipo-token"] = "llave";
+// Axios.defaults.headers.common["llave-token"] = init.llave;
 
 
 let api;
@@ -126,7 +126,7 @@ const moduloSP = {
     }
   },
   actions: {
-    asignarClave(context, clave) {
+    asignarId(context, clave) {
       context.commit('MUTATE_ID_SP', clave);
     },
 

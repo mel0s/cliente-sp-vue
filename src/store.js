@@ -1,8 +1,9 @@
 import Vue from "vue";
 import Axios from "axios";
-import init from "../init.js";
-import socket from "./socket"
+import init from '../init';
+import Socket from "./socket"
 import Api from './api';
+
 
 import {
   SOCKET_ONOPEN,
@@ -13,24 +14,24 @@ import {
   SOCKET_RECONNECT_ERROR
 } from "./mutation-types.js";
 
-
-
 Axios.defaults.headers.common["access-token"] = init.tokenApi;
 Axios.defaults.headers.common["sistemaorigenid-token"] = init.sistemaOrigenId;
 Axios.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
 
-
+let socket;
 let api;
+
 const moduloSP = {
   state: {
     socket: {
-      admistradorId: '',
       clave: '',
       dispositivo: '',
       message: "",
       id: '',
       isConnected: false,
       reconnectError: false,
+      usuarioId: '',
+      ref: '',
       sesion: ''
     },
     notificacionesSP: {
@@ -117,7 +118,11 @@ const moduloSP = {
     },
     MUTATE_VARIABLES_SP(state, variables) {
       state.socket.id = variables.id;
-      state.socket.clave = variables.clave;
+      state.socket.ref = variables.ref;
+
+    },
+    MUTATE_CLAVE_SP(state, clave) {
+      state.socket.clave = clave;
     },
     MUTATE_ID_SP(state, id) {
       state.socket.id = id;
@@ -133,8 +138,9 @@ const moduloSP = {
 
     iniciarSP(context, variables) {
       context.commit('MUTATE_VARIABLES_SP', variables);
-      api = new Api(init.sistemaOrigenId, init.tokenApi, init.token, context.state.dispositivo, context.state.admistradorId, init.host, context);
-      api.obtenerAcceso(variables.clave);
+      socket = new Socket(variables.ref);
+      api = new Api(init.sistemaOrigenId, init.tokenApi, init.token, variables.id, init.dispositivo, init.usuarioId, init.host, context);
+      api.obtenerAcceso(init.clave);
     },
 
     asignarSesion(context, sesion) {
@@ -152,7 +158,7 @@ const moduloSP = {
     conectarSocket() {
       socket.conectarSocket(init);
       if (api) {
-        api.iniciarApi();
+        api.iniciar();
       }
     },
     desconetarSocket() {
@@ -174,8 +180,6 @@ const moduloSP = {
     obtenerNotificaciones() {
       api.obtenerNotificacionesVigentes();
     }
-
-
   },
   getters: {
     alertas: (state) => {
@@ -186,9 +190,8 @@ const moduloSP = {
     },
     estado: (state) => {
       return state.notificacionesSP.estado;
-    },
+    }
   }
-
 }
 
 

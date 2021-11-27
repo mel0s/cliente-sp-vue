@@ -1,47 +1,61 @@
-import Vue from "vue";
+
 import store from "./store";
-import init from "../init.js"
+import init from '../init';
 
-// Conectamos con el servidor push svanesa
-function conectarSocket(init) {
-  if (!store.state.socket.isConnected) {
-    Vue.prototype.$connect(`${init.ws}?id=${store.state.socket.id}&token=${init.token}`);
+export default class Socket {
+  constructor(ref) {
+    this.ref = ref;
   }
 
-}
+  // Conectamos con el servidor push svanesa
+  conectarSocket(init) {
 
-// Envio de la notificacion valida a espera del servidor listo
-function enviarNotificacion(noti, interval = 1000) {
-  function esperaConexion(callback, interval) {
-    // Listo el cliente
-    if (Vue.prototype.$socket.readyState === 1) {
-      callback();
-    } else {
-      // Se generan time up paara la espera 
-      setTimeout(function () {
-        esperaConexion(callback, interval);
-      }, interval);
+    if (!store.state.socket.isConnected) {
+      this.ref.$connect(`${init.ws}?id=${store.state.socket.id}&token=${init.token}`);
+    }
+
+  }
+
+  // Envio de la notificacion valida a espera del servidor listo
+  enviarNotificacion(noti, interval = 1000) {
+    function esperaConexion(callback, interval) {
+      // Listo el cliente
+      if (this.ref.$socket.readyState === 1) {
+        callback();
+      } else {
+        // Se generan time up paara la espera 
+        setTimeout(function () {
+          esperaConexion(callback, interval);
+        }, interval);
+      }
+    }
+
+    esperaConexion.call(this, esperar.bind(this), interval);
+
+    function esperar() {
+      // Agregamos de manera automatica el token
+      if (typeof noti == 'object') {
+        noti.token = init.token;
+        noti.id = store.state.socket.id;
+        this.ref.$socket.send(JSON.stringify(noti))
+      }
+
     }
   }
-  esperaConexion(function () {
-    // Agregamos de manera automatica el token
-    if (typeof noti == 'object') {
-      noti.token = init.token;
-      noti.id = store.state.socket.id;
-      Vue.prototype.$socket.send(JSON.stringify(noti))
-    }
 
-  }, interval);
+  // Desconectamos con el servidor push
+  desconetarSocket() {
+    this.ref.$disconnect();
+  }
 }
 
-// Desconectamos con el servidor push
-function desconetarSocket() {
-  Vue.prototype.$disconnect();
-}
 
-export default {
-  conectarSocket,
-  enviarNotificacion,
-  desconetarSocket
 
-}
+
+
+// export default {
+//   conectarSocket,
+//   enviarNotificacion,
+//   desconetarSocket
+
+// }

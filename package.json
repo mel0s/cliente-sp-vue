@@ -5,7 +5,9 @@
   "description": "Conexion al servidor push",
   "author": "Oswaldo Sanchez Melos <oswaldosanchezmelos@gmail.com>",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/mel0s/cliente-sp-vue.git"

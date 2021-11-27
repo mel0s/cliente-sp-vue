@@ -1,6 +1,8 @@
 "strict mode"
+
 import moduloSP from './src/store.js'
-import init from "./init"
+import init from './init';
+
 import {
   SOCKET_ONOPEN,
   SOCKET_ONCLOSE,
@@ -27,3 +29,5 @@ export default {
   mutations,
   init
 }
+
+

@@ -1,4 +1,4 @@
-import Vue from "vue";
+
 import Axios from "axios";
 import init from '../init';
 import Socket from "./socket"
@@ -42,7 +42,7 @@ const moduloSP = {
   },
   mutations: {
     [SOCKET_ONOPEN](state, event) {
-      Vue.prototype.$socket = event.currentTarget;
+      state.socket.ref.$socket = event.currentTarget;
       console.log("conectado");
       state.socket.isConnected = true;
     },
@@ -56,9 +56,7 @@ const moduloSP = {
     // default handler called for all methods
     [SOCKET_ONMESSAGE](state, message) {
       state.socket.message = message;
-      //console.log(Vue.prototype.$awn);
       let data = JSON.parse(message.data);
-
       // Alerta correcta
       if (data.status == "200") {
         let d = data.data;

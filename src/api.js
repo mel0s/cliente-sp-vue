@@ -62,6 +62,7 @@ export default class Api {
     function success(r) {
       this.sesionToken = r.data.data.sesionToken;
 
+      // Agregamos las variables de sesion iniciada
       this.axios.defaults.headers.common["sesion-token"] = this.sesionToken;
       this.axios.defaults.headers.common["administradorid-token"] = this.usuarioId;
 
@@ -71,31 +72,16 @@ export default class Api {
       // Quitamos la clave 
       this.context.commit("MUTATE_CLAVE_SP", "#CLAVEsp");
 
+      // Conectamos con el servidor push nudo
       this.context.dispatch('conectarSocket');
 
-      
-      //console.log(this.axios.defaults.headers)
 
-      // function exito(config) {
-      //   console.log(config);
-      //   config.headers.common["sesion-token"] = this.sesionToken;
-      //   if (this.usuarioId) {
-      //     config.headers.common["administradorid-token"] = this.usuarioId;
-      //   }
-      //   return config;
-      // }
-      // this.axios.interceptors.request.use(
-      //   exito.bind(this),
-      //   function (error) {
-      //     return Promise.reject(error);
-      //   }
-      // );
     }
   }
 
   /**
-   * Petecion para obtener el listado de notificaciones registradas
-   * @returns 
+   * Peticion para obtener el listado de notificaciones registradas
+   * @returns Lista de notificaciones encoladas y no vistas.
    */
 
   async obtenerNotificacionesVigentes() {

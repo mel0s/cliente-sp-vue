@@ -6,18 +6,25 @@ import errores from "../errores";
  */
 export default class Api {
   constructor(sistemaOrigenId, tokenApi, tokenSP, id, dispositivo, usuarioId, host, context) {
+    // Token de sesion de acceso
     this.sesionToken = "";
+    // Notificaciones generadas
     this.notificaciones = [];
-    //this.clave = clave;
+    // Identificador del sistema
     this.sistemaId = sistemaOrigenId;
+    // Identificador del usuario que esta logueando
     this.usuarioId = usuarioId;
+    // Id del usuario que esta conectando con el servidor push.
     this.id = id;
+    // Ruta del servicio.
     this.host = host;
+    // Token de acceso al servidor push.
     this.tokenSP = tokenSP;
+    // Nombre del dispositivo
     this.dispositivo = dispositivo;
+    // Referencia del store
     this.context = context;
-
-
+    // Referencia de axios para peticiones de api rest
     this.axios = axios.create({
       baseURL: this.host,
       timeout: 3000,
@@ -83,7 +90,6 @@ export default class Api {
    * Peticion para obtener el listado de notificaciones registradas
    * @returns Lista de notificaciones encoladas y no vistas.
    */
-
   async obtenerNotificacionesVigentes() {
     let noti = [];
     await this.axios
@@ -92,7 +98,7 @@ export default class Api {
         let res = r.data;
         noti = res.data;
         if (this.context) {
-          this.context.commit('MUTATE_CLAVE_SP', noti)
+          this.context.commit('MUTATE_NOTIFICACION_SP_ALERTAS', noti)
         }
       })
       .catch((e) => {

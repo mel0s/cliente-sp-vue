@@ -1,9 +1,8 @@
-
 import Axios from "axios";
 import init from '../init';
 import Socket from "./socket"
 import Api from './api';
-
+console.log(init)
 
 import {
   SOCKET_ONOPEN,
@@ -24,16 +23,25 @@ let api;
 const moduloSP = {
   state: {
     socket: {
+      // Numero 
       clave: '',
+      // Nombre del dispositivo
       dispositivo: '',
-      message: "",
+
+      mensaje: "",
+      // Indentificador del usuario socket
       id: '',
+      // 
       isConnected: false,
       reconnectError: false,
+      // Identificador del usuario que esta configurando
       usuarioId: '',
+      // Referencia de vue-native
       ref: '',
+      // Variable de sesion de acceso
       sesion: ''
     },
+    // Datos del servidor push
     notificacionesSP: {
       estado: false,
       alertas: new Array(),
@@ -41,22 +49,25 @@ const moduloSP = {
     }
   },
   mutations: {
+    // Socket abierto
     [SOCKET_ONOPEN](state, event) {
       state.socket.ref.$socket = event.currentTarget;
       console.log("conectado");
       state.socket.isConnected = true;
     },
+    // Socket cerrado
     [SOCKET_ONCLOSE](state) {
       console.log("Cerrando la conexion")
       state.socket.isConnected = false;
     },
+    // Socket con error
     [SOCKET_ONERROR](state, event) {
       console.error(state, event);
     },
-    // default handler called for all methods
-    [SOCKET_ONMESSAGE](state, message) {
-      state.socket.message = message;
-      let data = JSON.parse(message.data);
+    // Mensaje recibido
+    [SOCKET_ONMESSAGE](state, mensaje) {
+      state.socket.mensaje = mensaje;
+      let data = JSON.parse(mensaje.data);
       // Alerta correcta
       if (data.status == "200") {
         let d = data.data;
@@ -111,57 +122,52 @@ const moduloSP = {
     [SOCKET_RECONNECT_ERROR](state) {
       state.socket.reconnectError = true;
     },
+    // Lista de alertas
     MUTATE_NOTIFICACION_SP_ALERTAS(state, alertas) {
       state.notificacionesSP.alertas = [...alertas];
     },
+    // Asigna las variables de acceso a api de svanesa
     MUTATE_VARIABLES_SP(state, variables) {
       state.socket.id = variables.id;
       state.socket.ref = variables.ref;
-
     },
+    // Asigna la clave de acceso para el login de api svanesa
     MUTATE_CLAVE_SP(state, clave) {
       state.socket.clave = clave;
     },
-    MUTATE_ID_SP(state, id) {
-      state.socket.id = id;
-    },
+    // Asigna la sesion para el acceso a la api svanesa
     MUTATE_SESION_SP(state, sesion) {
       state.socket.sesion = sesion;
     }
   },
   actions: {
-    asignarId(context, clave) {
-      context.commit('MUTATE_ID_SP', clave);
-    },
-
-    iniciarSP(context, variables) {
-      context.commit('MUTATE_VARIABLES_SP', variables);
-      socket = new Socket(variables.ref);
-      api = new Api(init.sistemaOrigenId, init.tokenApi, init.token, variables.id, init.dispositivo, init.usuarioId, init.host, context);
-      api.obtenerAcceso(init.clave);
-    },
-
-    asignarSesion(context, sesion) {
-      context.commit('MUTATE_SESION_SP', sesion);
-    },
+    // Agregar la lista de notificaciones alertas
     agregarNotificacionAlertas: (context, d) => {
       context.commit('MUTATE_NOTIFICACION_SP_ALERTAS', d);
     },
+    // Asigna la variable de sesion 
+    asignarSesion(context, sesion) {
+      context.commit('MUTATE_SESION_SP', sesion);
+    },
+    // Cambia el estado del usuario id
     cambiarEstado: function (context, obj) {
       if (typeof obj == "object") {
         obj.accion = "NOTI_SVANESA_ESTADO";
         socket.enviarNotificacion(obj, 1000);
       }
     },
+    // Conecta con el servidor push
     conectarSocket() {
       socket.conectarSocket(init);
       if (api) {
         api.iniciar();
       }
     },
+    // Desconecta con el servidor push
     desconetarSocket() {
       socket.desconetarSocket();
     },
+    // Envia una alerta notificacion
     enviarNotificacion: function ({ context, obj }) {
       if (typeof obj == "object") {
         obj.accion = "NOTI_SVANESA_ALERTA";
@@ -169,23 +175,35 @@ const moduloSP = {
         socket.enviarNotificacion(obj, 1000);
       }
     },
+    // Envio de notificaciones a todos los usuarios de un token.
     enviarNotificacionSistema: function (context, obj) {
       if (typeof obj == "object") {
         obj.accion = "NOTI_SVANESA_SISTEMA_TODOS";
         socket.enviarNotificacion(obj, 1000);
       }
     },
+    // Inicia el servidor push y acceso a la api svanesa.
+    iniciarSP(context, variables) {
+      context.commit('MUTATE_VARIABLES_SP', variables);
+      socket = new Socket(variables.ref);
+      api = new Api(init.sistemaOrigenId, init.tokenApi, init.token, variables.id, init.dispositivo, init.usuarioId, init.host, context);
+      api.obtenerAcceso(init.clave);
+    },
+    // Obtiene las notificaciones que esta como no vistas
     obtenerNotificaciones() {
       api.obtenerNotificacionesVigentes();
     }
   },
   getters: {
+    // Alertas recibidas
     alertas: (state) => {
       return state.notificacionesSP.alertas;
     },
+    // Alerta recibida
     alerta: (state) => {
       return state.notificacionesSP.alerta;
     },
+    // Estado del usuario.
     estado: (state) => {
       return state.notificacionesSP.estado;
     }

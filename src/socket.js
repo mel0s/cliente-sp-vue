@@ -3,6 +3,11 @@ import store from "./store";
 import init from '../init';
 
 export default class Socket {
+  /**
+   * Constructor con la referencia de vue-native-websocket
+   * @param {Object} ref - Vue-native-websocket
+   */
+
   constructor(ref) {
     this.ref = ref;
   }

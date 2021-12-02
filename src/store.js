@@ -98,7 +98,7 @@ const moduloSP = {
           state.notificacionesSP.alertas.push(d);
           let tipo = d.tipo;
 
-          if (/(\W|^)(primary|info|warning|success)(\W|$)/.test(tipo)) {
+          if (/(\W|^)(primary|info|warning|success|tip)(\W|$)/.test(tipo)) {
             let opcion = {
               labels: {}
             };
@@ -163,6 +163,11 @@ const moduloSP = {
     },
     // Lista de alertas
     MUTATE_NOTIFICACION_SP_ALERTAS(state, alertas) {
+      // alertas = alertas.sort(function (a, b) {
+      //   return new Date(a.fechaMovimiento) - new Date(a.fechaMovimiento);
+
+      // });
+
       state.notificacionesSP.alertas = [...alertas];
     },
     // Asigna las variables de acceso a api de svanesa

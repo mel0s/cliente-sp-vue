@@ -2,7 +2,22 @@ import Axios from "axios";
 import init from '../init';
 import Socket from "./socket"
 import Api from './api';
-console.log(init)
+import AWN from "awesome-notifications";
+let options = {
+  position: "bottom-right",
+  maxNotifications: 5,
+  animationDuration: 1000,
+  durations: {
+    tip: 4000
+  },
+  labels: {
+    success: "Exito",
+    info: "Info",
+    tip: "Tip",
+    alert: "Error"
+  }
+};
+let notifier = new AWN(options);
 
 import {
   SOCKET_ONOPEN,
@@ -26,7 +41,7 @@ const moduloSP = {
       // Numero 
       clave: '',
       // Nombre del dispositivo
-      dispositivo: '',
+      dispositivo: init.dispositivo,
 
       mensaje: "",
       // Indentificador del usuario socket
@@ -35,11 +50,12 @@ const moduloSP = {
       isConnected: false,
       reconnectError: false,
       // Identificador del usuario que esta configurando
-      usuarioId: '',
+      usuarioId: init.usuarioId,
       // Referencia de vue-native
       ref: '',
       // Variable de sesion de acceso
-      sesion: ''
+      sesion: '',
+      socket: init.socket
     },
     // Datos del servidor push
     notificacionesSP: {
@@ -68,6 +84,7 @@ const moduloSP = {
     [SOCKET_ONMESSAGE](state, mensaje) {
       state.socket.mensaje = mensaje;
       let data = JSON.parse(mensaje.data);
+
       // Alerta correcta
       if (data.status == "200") {
         let d = data.data;
@@ -79,9 +96,24 @@ const moduloSP = {
         // Cuando la accion no tiene nombre se toma por default NOTI_SVANESA_ALERTA
         else if (d.accion === "NOTI_SVANESA_ALERTA") {
           state.notificacionesSP.alertas.push(d);
+          let tipo = d.tipo;
+
+          if (/(\W|^)(primary|info|warning|success)(\W|$)/.test(tipo)) {
+            let opcion = {
+              labels: {}
+            };
+            opcion.labels[d.tipo] = d.titulo;
+            notifier[tipo](d.mensaje, opcion);
+          }
+
+
+
           // Coloque aqui una accion
         }
         state.notificacionesSP.alerta = d;
+      }
+      else if (data.status == "201") {
+        ;
       }
       // Alertas error
       else if (data.status == "400") {
@@ -89,30 +121,37 @@ const moduloSP = {
           tipo: 'warning-sp',
           mensaje: data.message
         };
+
+        notifier.warning(data.message)
+
       }
       else if (data.status == "401") {
         state.notificacionesSP.alerta = {
           tipo: 'warning-sp',
           mensaje: data.message
         };
+        notifier.warning(data.message)
       }
       else if (data.status == "409") {
         state.notificacionesSP.alerta = {
           tipo: 'warning-sp',
           mensaje: data.message
         };
+        notifier.warning(data.message)
       }
       else if (data.status == "500") {
         state.notificacionesSP.alerta = {
           tipo: 'warning-sp',
           mensaje: data.message
         };
+        notifier.warning(data.message)
       }
       else {
         state.notificacionesSP.alerta = {
           tipo: 'warning-sp',
           mensaje: data.message
         };
+        notifier.warning(data.message)
       }
     },
     // mutations for reconnect methods
@@ -168,10 +207,11 @@ const moduloSP = {
       socket.desconetarSocket();
     },
     // Envia una alerta notificacion
-    enviarNotificacion: function ({ context, obj }) {
+    enviarNotificacion: function (context, obj) {
       if (typeof obj == "object") {
         obj.accion = "NOTI_SVANESA_ALERTA";
-        obj.id = context.state
+        obj.id = context.getters.id;
+        obj.token = context.getters.token;
         socket.enviarNotificacion(obj, 1000);
       }
     },
@@ -195,18 +235,24 @@ const moduloSP = {
     }
   },
   getters: {
-    // Alertas recibidas
-    alertas: (state) => {
-      return state.notificacionesSP.alertas;
-    },
     // Alerta recibida
     alerta: (state) => {
       return state.notificacionesSP.alerta;
     },
+    // Alertas recibidas
+    alertas: (state) => {
+      return state.notificacionesSP.alertas;
+    },
     // Estado del usuario.
     estado: (state) => {
       return state.notificacionesSP.estado;
-    }
+    },
+    id: (state) => {
+      return state.socket.id;
+    },
+    token: (state) => {
+      return state.socket.token;
+    },
   }
 }
 

@@ -16,7 +16,7 @@ export default class Socket {
   conectarSocket(init) {
 
     if (!store.state.socket.isConnected) {
-      this.ref.$connect(`${init.ws}?id=${store.state.socket.id}&token=${init.token}`);
+      this.ref.$connect(`${init.ws}?id=${store.state.socket.id}&token=${init.token}&dispositivo=${init.dispositivo}`);
     }
 
   }

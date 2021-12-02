@@ -5,14 +5,13 @@
   "description": "Conexion al servidor push",
   "author": "Oswaldo Sanchez Melos <oswaldosanchezmelos@gmail.com>",
   "license": "MIT",
-  "scripts": {
-    
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/mel0s/cliente-sp-vue.git"
   },
   "dependencies": {
+    "awesome-notifications": "^3.1.2",
     "axios": "^0.21.4",
     "config": "^3.3.6",
     "npm": "^8.1.4",

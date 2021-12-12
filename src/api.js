@@ -48,41 +48,48 @@ export default class Api {
   /**
    * Obtiene el token de acceso.
    * @param {String} clave  -  Cadena con la clave de acceso para obtener la sesion 
+   * @param {String} sesion -  Valor de la sesion si existe
    */
-  async obtenerAcceso(clave) {
+  async obtenerAcceso(clave, sesion) {
     // Parametros de la consulta.
     let filtro = {
       clave: clave,
       sistemaId: this.sistemaId,
       usuarioId: this.usuarioId
     };
-
-    // Petecion de sesion token
-    await this.axios
-      .post(`${this.host}/api/accesoUsuarioToken`, filtro)
-      .then(success.bind(this))
-      .catch((e) => {
-        this.context.commit("MUTATE_CLAVE_SP", "#CLAVEsp")
-        errores(e);
-      });
-
-    function success(r) {
-      this.sesionToken = r.data.data.sesionToken;
-
-      // Agregamos las variables de sesion iniciada
-      this.axios.defaults.headers.common["sesion-token"] = this.sesionToken;
+    if (sesion) {
+      this.axios.defaults.headers.common["sesion-token"] = sesion;
       this.axios.defaults.headers.common["administradorid-token"] = this.usuarioId;
-
-      // Guardamos la variable de sesion
-      this.context.commit('MUTATE_SESION_SP', this.sesionToken);
-
-      // Quitamos la clave 
-      this.context.commit("MUTATE_CLAVE_SP", "#CLAVEsp");
-
       // Conectamos con el servidor push nudo
       this.context.dispatch('conectarSocket');
+    }
 
+    else {
+      // Petecion de sesion token
+      await this.axios
+        .post(`${this.host}/api/accesoUsuarioToken`, filtro)
+        .then(success.bind(this))
+        .catch((e) => {
+          this.context.commit("MUTATE_CLAVE_SP", "#CLAVEsp")
+          errores(e);
+        });
 
+      function success(r) {
+        this.sesionToken = r.data.data.sesionToken;
+
+        // Agregamos las variables de sesion iniciada
+        this.axios.defaults.headers.common["sesion-token"] = this.sesionToken;
+        this.axios.defaults.headers.common["administradorid-token"] = this.usuarioId;
+
+        // Guardamos la variable de sesion
+        this.context.commit('MUTATE_SESION_SP', this.sesionToken);
+
+        // Quitamos la clave 
+        this.context.commit("MUTATE_CLAVE_SP", "#CLAVEsp");
+
+        // Conectamos con el servidor push nudo
+        this.context.dispatch('conectarSocket');
+      }
     }
   }
 

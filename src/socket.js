@@ -15,7 +15,10 @@ export default class Socket {
   // Conectamos con el servidor push svanesa
   conectarSocket(init) {
 
-    if (!store.state.socket.isConnected) {
+
+    let t = localStorage.getItem('svanesa.sp.sesion-cliente');
+
+    if (!store.state.socket.isConnected && localStorage.getItem('svanesa.sp.sesion-cliente')) {
       this.ref.$connect(`${init.ws}?id=${store.state.socket.id}&token=${init.token}&dispositivo=${init.dispositivo}`);
     }
 
@@ -27,11 +30,19 @@ export default class Socket {
       // Listo el cliente
       if (this.ref.$socket.readyState === 1) {
         callback();
-      } else {
-        // Se generan time up paara la espera 
-        setTimeout(function () {
-          esperaConexion(callback, interval);
-        }, interval);
+      }
+      else if (this.ref.$socket.readyState === 3) {
+        this.conectarSocket();
+      }
+      else {
+        // Se generan time up para la espera 
+        setTimeout(timeOut.bind(this), interval);
+
+        function timeOut() {
+          esperaConexion.call(this, callback, interval);
+        }
+
+
       }
     }
 

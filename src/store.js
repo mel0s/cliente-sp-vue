@@ -51,17 +51,13 @@ const moduloSP = {
       reconnectError: false,
       // Identificador del usuario que esta configurando
       usuarioId: init.usuarioId,
-      // Referencia de vue-native
-      ref: '',
-      // Variable de sesion de acceso
-      sesion: '',
-      socket: init.socket
+      // Referencia de vue-nativenotificacionesAnual
     },
-    // Datos del servidor push
-    notificacionesSP: {
-      estado: false,
+    'nudoNotificaciones': {
       alertas: new Array(),
-      alerta: {}
+      alerta: {},
+      activos: new Array(),
+      estado: 'inactivo'
     }
   },
   mutations: {
@@ -90,12 +86,37 @@ const moduloSP = {
         let d = data.data;
         // Cambia el estado del usuario en ejecucion.
         if (d.accion === "NOTI_SVANESA_ESTADO") {
-          state.notificacionesSP.estado = d.estado;
+          state.nudoNotificaciones.estado = d.estado;
+          // coloque aqui un accion
+        }
+        else if (d.accion === "NOTI_SP_SVANESA_ALERTA") {
+          console.log(data);
+
+          // coloque aqui un accion
+        }
+        else if (d.accion === "NOTI_SP_SVANESA_ESTADO") {
+
+
+
+          if (d.estado == 'activo') {
+            let e = state.nudoNotificaciones.activos.find(x => x.id == d.id);
+            if (!e) {
+              state.nudoNotificaciones.activos.push(d);
+            }
+          }
+          else {
+            let index = state.nudoNotificaciones.activos.findIndex(x => x.id == d.id);
+
+            if (index > -1) {
+              state.nudoNotificaciones.activos.splice(index, 1);
+            }
+
+          }
           // coloque aqui un accion
         }
         // Cuando la accion no tiene nombre se toma por default NOTI_SVANESA_ALERTA
         else if (d.accion === "NOTI_SVANESA_ALERTA") {
-          state.notificacionesSP.alertas.push(d);
+          state.nudoNotificaciones.alertas.push(d);
           let tipo = d.tipo;
 
           if (/(\W|^)(primary|info|warning|success|tip)(\W|$)/.test(tipo)) {
@@ -106,18 +127,16 @@ const moduloSP = {
             notifier[tipo](d.mensaje, opcion);
           }
 
-
-
           // Coloque aqui una accion
         }
-        state.notificacionesSP.alerta = d;
+        state.nudoNotificaciones.alerta = d;
       }
       else if (data.status == "201") {
         ;
       }
       // Alertas error
       else if (data.status == "400") {
-        state.notificacionesSP.alerta = {
+        state.nudoNotificaciones.alerta = {
           tipo: 'warning-sp',
           mensaje: data.message
         };
@@ -126,28 +145,28 @@ const moduloSP = {
 
       }
       else if (data.status == "401") {
-        state.notificacionesSP.alerta = {
+        state.nudoNotificaciones.alerta = {
           tipo: 'warning-sp',
           mensaje: data.message
         };
         notifier.warning(data.message)
       }
       else if (data.status == "409") {
-        state.notificacionesSP.alerta = {
+        state.nudoNotificaciones.alerta = {
           tipo: 'warning-sp',
           mensaje: data.message
         };
         notifier.warning(data.message)
       }
       else if (data.status == "500") {
-        state.notificacionesSP.alerta = {
+        state.nudoNotificaciones.alerta = {
           tipo: 'warning-sp',
           mensaje: data.message
         };
         notifier.warning(data.message)
       }
       else {
-        state.notificacionesSP.alerta = {
+        state.nudoNotificaciones.alerta = {
           tipo: 'warning-sp',
           mensaje: data.message
         };
@@ -168,7 +187,7 @@ const moduloSP = {
 
       // });
 
-      state.notificacionesSP.alertas = [...alertas];
+      state.nudoNotificaciones.alertas = [...alertas];
     },
     // Asigna las variables de acceso a api de svanesa
     MUTATE_VARIABLES_SP(state, variables) {
@@ -182,6 +201,11 @@ const moduloSP = {
     // Asigna la sesion para el acceso a la api svanesa
     MUTATE_SESION_SP(state, sesion) {
       state.socket.sesion = sesion;
+      localStorage.setItem('svanesa.sp.sesion-cliente', sesion);
+    },
+    // Asigna la sesion para el acceso a la api svanesa
+    MUTATE_ESTADO_SP(state, estado) {
+      state.nudoNotificaciones.estado = estado;
     }
   },
   actions: {
@@ -193,13 +217,6 @@ const moduloSP = {
     asignarSesion(context, sesion) {
       context.commit('MUTATE_SESION_SP', sesion);
     },
-    // Cambia el estado del usuario id
-    cambiarEstado: function (context, obj) {
-      if (typeof obj == "object") {
-        obj.accion = "NOTI_SVANESA_ESTADO";
-        socket.enviarNotificacion(obj, 1000);
-      }
-    },
     // Conecta con el servidor push
     conectarSocket() {
       socket.conectarSocket(init);
@@ -208,8 +225,37 @@ const moduloSP = {
       }
     },
     // Desconecta con el servidor push
-    desconetarSocket() {
+    desconetarSocket(context, cambiarEstado = true) {
+      localStorage.removeItem('svanesa.sp.sesion-cliente');
+
+      if (cambiarEstado) {
+        let obj = {
+          accion: 'NOTI_SVANESA_ESTADO',
+          id: context.getters.id,
+          token: init.token,
+          estado: 'inactivo',
+          fechaMovimiento: new Date()
+        };
+
+        context.commit('MUTATE_ESTADO_SP', 'inactivo');
+        socket.enviarNotificacion(obj, 10000);
+
+      }
+
+
       socket.desconetarSocket();
+
+    },
+    // Envia el estado del usuario logueado
+    enviarEstado: function (context, obj) {
+      if (typeof obj == "object") {
+        obj.accion = "NOTI_SVANESA_ESTADO";
+        obj.id = context.getters.id;
+        obj.token = context.getters.token;
+        obj.fechaMovimiento = new Date();
+        context.commit('MUTATE_ESTADO_SP', obj.estado);
+        socket.enviarNotificacion(obj, 10000);
+      }
     },
     // Envia una alerta notificacion
     enviarNotificacion: function (context, obj) {
@@ -217,7 +263,8 @@ const moduloSP = {
         obj.accion = "NOTI_SVANESA_ALERTA";
         obj.id = context.getters.id;
         obj.token = context.getters.token;
-        socket.enviarNotificacion(obj, 1000);
+        obj.fechaMovimiento = new Date();
+        socket.enviarNotificacion(obj, 10000);
       }
     },
     // Envio de notificaciones a todos los usuarios de un token.
@@ -230,9 +277,17 @@ const moduloSP = {
     // Inicia el servidor push y acceso a la api svanesa.
     iniciarSP(context, variables) {
       context.commit('MUTATE_VARIABLES_SP', variables);
-      socket = new Socket(variables.ref);
-      api = new Api(init.sistemaOrigenId, init.tokenApi, init.token, variables.id, init.dispositivo, init.usuarioId, init.host, context);
-      api.obtenerAcceso(init.clave);
+      if (!socket) {
+        socket = new Socket(variables.ref);
+      }
+
+      if (!api) {
+        api = new Api(init.sistemaOrigenId, init.tokenApi, init.token, variables.id, init.dispositivo, init.usuarioId, init.host, context);
+      }
+
+      let sesion = localStorage.getItem('svanesa.sp.sesion-cliente');
+      api.obtenerAcceso(init.clave, sesion);
+
     },
     // Obtiene las notificaciones que esta como no vistas
     obtenerNotificaciones() {
@@ -240,17 +295,21 @@ const moduloSP = {
     }
   },
   getters: {
+    // Estados activos
+    activos: (state) => {
+      return state.nudoNotificaciones.activos;
+    },
     // Alerta recibida
     alerta: (state) => {
-      return state.notificacionesSP.alerta;
+      return state.nudoNotificaciones.alerta;
     },
     // Alertas recibidas
     alertas: (state) => {
-      return state.notificacionesSP.alertas;
+      return state.nudoNotificaciones.alertas;
     },
     // Estado del usuario.
     estado: (state) => {
-      return state.notificacionesSP.estado;
+      return state.nudoNotificaciones.estado;
     },
     id: (state) => {
       return state.socket.id;

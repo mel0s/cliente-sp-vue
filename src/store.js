@@ -53,10 +53,13 @@ const moduloSP = {
       usuarioId: init.usuarioId,
       // Referencia de vue-nativenotificacionesAnual
     },
-    'nudoNotificaciones': {
+    nudo: {
+      alertas: new Array(),
+      activos: new Array(),
+    },
+    notificaciones: {
       alertas: new Array(),
       alerta: {},
-      activos: new Array(),
       estado: 'inactivo'
     }
   },
@@ -86,11 +89,20 @@ const moduloSP = {
         let d = data.data;
         // Cambia el estado del usuario en ejecucion.
         if (d.accion === "NOTI_SVANESA_ESTADO") {
-          state.nudoNotificaciones.estado = d.estado;
+          state.notificaciones.estado = d.estado;
           // coloque aqui un accion
         }
         else if (d.accion === "NOTI_SP_SVANESA_ALERTA") {
-          console.log(data);
+
+          state.nudo.alertas.splice(0, 0, d);
+
+          let l = state.nudo.alertas.length;
+
+          if (l == 50) {
+            state.nudo.alertas.splice(49, 1);
+
+          }
+
 
           // coloque aqui un accion
         }
@@ -99,16 +111,16 @@ const moduloSP = {
 
 
           if (d.estado == 'activo') {
-            let e = state.nudoNotificaciones.activos.find(x => x.id == d.id);
+            let e = state.nudo.activos.find(x => x.id == d.id);
             if (!e) {
-              state.nudoNotificaciones.activos.push(d);
+              state.nudo.activos.push(d);
             }
           }
           else {
-            let index = state.nudoNotificaciones.activos.findIndex(x => x.id == d.id);
+            let index = state.nudo.activos.findIndex(x => x.id == d.id);
 
             if (index > -1) {
-              state.nudoNotificaciones.activos.splice(index, 1);
+              state.nudo.activos.splice(index, 1);
             }
 
           }
@@ -116,7 +128,10 @@ const moduloSP = {
         }
         // Cuando la accion no tiene nombre se toma por default NOTI_SVANESA_ALERTA
         else if (d.accion === "NOTI_SVANESA_ALERTA") {
-          state.nudoNotificaciones.alertas.push(d);
+
+
+          state.notificaciones.alertas.splice(0, 0, d);
+
           let tipo = d.tipo;
 
           if (/(\W|^)(primary|info|warning|success|tip)(\W|$)/.test(tipo)) {
@@ -129,14 +144,14 @@ const moduloSP = {
 
           // Coloque aqui una accion
         }
-        state.nudoNotificaciones.alerta = d;
+        state.notificaciones.alerta = d;
       }
       else if (data.status == "201") {
         ;
       }
       // Alertas error
       else if (data.status == "400") {
-        state.nudoNotificaciones.alerta = {
+        state.notificaciones.alerta = {
           tipo: 'warning-sp',
           mensaje: data.message
         };
@@ -145,28 +160,28 @@ const moduloSP = {
 
       }
       else if (data.status == "401") {
-        state.nudoNotificaciones.alerta = {
+        state.notificaciones.alerta = {
           tipo: 'warning-sp',
           mensaje: data.message
         };
         notifier.warning(data.message)
       }
       else if (data.status == "409") {
-        state.nudoNotificaciones.alerta = {
+        state.notificaciones.alerta = {
           tipo: 'warning-sp',
           mensaje: data.message
         };
         notifier.warning(data.message)
       }
       else if (data.status == "500") {
-        state.nudoNotificaciones.alerta = {
+        state.notificaciones.alerta = {
           tipo: 'warning-sp',
           mensaje: data.message
         };
         notifier.warning(data.message)
       }
       else {
-        state.nudoNotificaciones.alerta = {
+        state.notificaciones.alerta = {
           tipo: 'warning-sp',
           mensaje: data.message
         };
@@ -187,7 +202,7 @@ const moduloSP = {
 
       // });
 
-      state.nudoNotificaciones.alertas = [...alertas];
+      state.notificaciones.alertas = [...alertas];
     },
     // Asigna las variables de acceso a api de svanesa
     MUTATE_VARIABLES_SP(state, variables) {
@@ -205,7 +220,7 @@ const moduloSP = {
     },
     // Asigna la sesion para el acceso a la api svanesa
     MUTATE_ESTADO_SP(state, estado) {
-      state.nudoNotificaciones.estado = estado;
+      state.notificaciones.estado = estado;
     }
   },
   actions: {
@@ -295,27 +310,35 @@ const moduloSP = {
     }
   },
   getters: {
-    // Estados activos
-    activos: (state) => {
-      return state.nudoNotificaciones.activos;
-    },
+
     // Alerta recibida
     alerta: (state) => {
-      return state.nudoNotificaciones.alerta;
+      return state.notificaciones.alerta;
     },
     // Alertas recibidas
     alertas: (state) => {
-      return state.nudoNotificaciones.alertas;
+      return state.notificaciones.alertas;
     },
+
     // Estado del usuario.
     estado: (state) => {
-      return state.nudoNotificaciones.estado;
+      return state.notificaciones.estado;
     },
     id: (state) => {
       return state.socket.id;
     },
     token: (state) => {
       return state.socket.token;
+    },
+
+    // Alertas recibidas
+    sp_alertas: (state) => {
+      return state.nudo.alertas;
+    },
+
+    // Estados activos
+    sp_activos: (state) => {
+      return state.nudo.activos;
     },
   }
 }

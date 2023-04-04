@@ -30,7 +30,8 @@ export default class Api {
       timeout: 3000,
     });
 
-    this.axios.defaults.headers.common["access-token"] = tokenApi;
+
+    this.axios.defaults.headers.common["api-token"] = tokenApi;
     this.axios.defaults.headers.common["sistemaorigenid-token"] = sistemaOrigenId;
     this.axios.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
 

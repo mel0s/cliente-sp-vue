@@ -14,10 +14,6 @@ export default class Socket {
 
   // Conectamos con el servidor push svanesa
   conectarSocket(init) {
-
-
-    let t = localStorage.getItem('svanesa.sp.sesion-cliente');
-
     if (!store.state.socket.isConnected && localStorage.getItem('svanesa.sp.sesion-cliente')) {
       this.ref.$connect(`${init.ws}?id=${store.state.socket.id}&token=${init.token}&dispositivo=${init.dispositivo}`);
     }
@@ -32,7 +28,7 @@ export default class Socket {
         callback();
       }
       else if (this.ref.$socket.readyState === 3) {
-        this.conectarSocket();
+        this.conectarSocket(init);
       }
       else {
         // Se generan time up para la espera 
@@ -66,12 +62,3 @@ export default class Socket {
 }
 
 
-
-
-
-// export default {
-//   conectarSocket,
-//   enviarNotificacion,
-//   desconetarSocket
-
-// }

@@ -1,4 +1,4 @@
-import Axios from "axios";
+
 import init from '../init';
 import Socket from "./socket"
 import Api from './api';
@@ -28,9 +28,7 @@ import {
   SOCKET_RECONNECT_ERROR
 } from "./mutation-types.js";
 
-Axios.defaults.headers.common["access-token"] = init.tokenApi;
-Axios.defaults.headers.common["sistemaorigenid-token"] = init.sistemaOrigenId;
-Axios.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
+
 
 let socket;
 let api;
